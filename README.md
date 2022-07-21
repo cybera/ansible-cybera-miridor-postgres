@@ -1,6 +1,6 @@
-# ansible-cybera-postgres
+# ansible-cybera-miridor-postgres
 
-Installs and configures Postfgres for use as in an IDSaaS environment
+Installs and configures Postgres for use as in an IDSaaS environment
 
 ## Usage
 
@@ -23,7 +23,7 @@ This role can be used in a playbook like so:
   tasks:
     - name: Apply Postgres role
       include_role:
-        name: "ansible-cybera-postgres"
+        name: "ansible-cybera-miridor-postgres"
       become: yes
 ```
 
@@ -39,7 +39,7 @@ need to do something like:
   tasks:
     - name: Just configure Postgres
       include_role:
-        name: "ansible-cybera-postgres"
+        name: "ansible-cybera-miridor-postgres"
         tasks_from: configure
       become: yes
 
@@ -80,7 +80,7 @@ And then do:
 ```shell
 $ mkdir work
 $ cd work
-$ git clone https://git.cybera.ca/cybera/ansible-cybera-postgres
-$ cd ansible-cybera-postfgres
+$ git clone https://git.cybera.ca/cybera/ansible-cybera-miridor-postgres
+$ cd ansible-cybera-miridor-postgres
 $ molecule test
 ```
