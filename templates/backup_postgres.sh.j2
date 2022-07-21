@@ -1,0 +1,11 @@
+#!/bin/bash
+
+BACKUP_PATH="/storage/pg-backups/{{ansible_hostname}}"
+NEW_NAME="backup_{{ansible_hostname}}_$(date -I)"
+OLD_NAME="backup_{{ansible_hostname}}"
+
+mkdir -p $BACKUP_PATH
+
+pg_dump --username postgres --format=d --jobs=4 --file=$BACKUP_PATH/$NEW_NAME/ idsaas
+rm -rf $BACKUP_PATH/$OLD_NAME
+mv --force $BACKUP_PATH/$NEW_NAME $BACKUP_PATH/$OLD_NAME

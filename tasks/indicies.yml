@@ -1,0 +1,22 @@
+---
+- name: Create database indexes for timestamp
+  postgresql_idx:
+    db: idsaas
+    table: events
+    columns: timestamp
+    idxname: idx_timestamp
+
+- name: Create database indexes for source ip
+  postgresql_idx:
+    db: idsaas
+    table: events
+    columns: src_ip
+    idxname: idx_srcip
+
+- name: Create database indexes for destination ip
+  postgresql_idx:
+    db: idsaas
+    table: events
+    columns: dest_ip
+    idxname: idx_destip
+

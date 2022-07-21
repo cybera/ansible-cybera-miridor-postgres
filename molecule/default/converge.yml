@@ -1,0 +1,15 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: Include test data
+      include_vars: vars.yml
+
+    - name: Apply geerlingguy's postgres role / install postgres
+      include_role:
+        name: postgresql
+
+    - name: Apply miridor-postgres role
+      include_role:
+        name: ansible-cybera-postgres
+

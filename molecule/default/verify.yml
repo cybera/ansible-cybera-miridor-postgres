@@ -1,0 +1,98 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: Include test data
+      include_vars: vars.yml
+
+    - name: Select query to confirm columns exist in events table 
+      community.postgresql.postgresql_query:
+        db: idsaas
+        query: |
+          SELECT column_name 
+          FROM information_schema.columns 
+          WHERE  
+            table_name='events' 
+          and 
+            column_name=%(column)s
+          ;
+        named_args:
+          column: "{{ item }}"
+      register: events_table
+      with_items: "{{ events_table_columns }}"
+      become: yes
+      become_user: postgres
+
+    - name: Verify that all columns are present in events table
+      assert:
+        that:
+          - "{{ item.rowcount }} > 0"
+      with_items: '{{ events_table.results }}'
+    
+    - name: Select query to configrm columns exist in rules table
+      community.postgresql.postgresql_query:
+        db: idsaas
+        query: |
+          SELECT column_name
+          FROM information_schema.columns
+          WHERE
+            table_name='rules'
+          and
+            column_name=%(column)s
+          ;
+        named_args:
+          column: "{{ item }}"
+      register: rules_table
+      with_items: "{{ rules_table_columns }}"
+      become: yes
+      become_user: postgres
+
+    - name: Verify that all columns are present in rules table
+      assert:
+        that:
+          - "{{ item.rowcount }} > 0"
+      with_items: '{{ rules_table.results }}'
+
+    - name: Try creating database indexes to capture state
+      postgresql_idx:
+        db: idsaas
+        table: events
+        columns: "{{ item.column }}"
+        idxname: "{{ item.idxname }}"
+      with_items:
+        - column: timestamp
+          idxname: idx_timestamp
+        - column: src_ip
+          idxname: idx_srcip
+        - column: dest_ip
+          idxname: idx_destip
+      register: indicies
+      become: yes
+      become_user: postgres
+
+    - name: Verify that all indicies are present in rules table
+      assert:
+        that:
+          - "'{{ item.state }}' == 'present'"
+      with_items: '{{ indicies.results }}'
+
+    - name: Stat the backup folder
+      stat:
+        path: /var/lib/postgresql/backups/
+      register: backup_folder
+
+    - name: Verify that the backup folder exsists
+      assert:
+        that:
+          - backup_folder.stat.exists
+
+    - name: Stat the backup script
+      stat:
+        path: /usr/local/bin/backup_postgres.sh
+      register: backup_script
+
+    - name: Verify that the backup script exists
+      assert:
+        that:
+          - backup_script.stat.exists

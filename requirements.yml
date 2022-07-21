@@ -1,0 +1,18 @@
+roles:
+        #  - src: https://github.com/cybera/ansible-cybera-postgres
+        #    version: master
+        #    name: miridor-postgres
+
+  - src: https://github.com/cybera/ansible-cybera-common
+    version: master
+    name: common
+
+  - src: geerlingguy.postgresql
+    name: postgresql
+    version: 3.0.0
+
+collections:
+  - name: ansible.posix
+  - name: community.general
+  - name: community.postgresql
+  - name: community.docker

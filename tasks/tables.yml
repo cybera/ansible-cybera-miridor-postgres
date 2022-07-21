@@ -1,0 +1,31 @@
+- name: Create events table with required columns
+  community.postgresql.postgresql_table:
+    db: idsaas
+    name: events
+    columns:
+    - id BIGSERIAL PRIMARY KEY
+    - timestamp TIMESTAMP
+    - src_ip INET
+    - dest_ip INET
+    - src_port INTEGER
+    - dest_port INTEGER
+    - protocol TEXT
+    - action TEXT
+    - signature_id INTEGER
+    - signature TEXT
+    - category TEXT
+    - severity INTEGER
+    - affected_product TEXT
+    - attack_target TEXT
+    - deployment TEXT
+    - signature_severity TEXT
+
+- name: Create rules table with required columns
+  community.postgresql.postgresql_table:
+    db: idsaas
+    name: rules
+    columns:
+    - id BIGSERIAL PRIMARY KEY
+    - pid INTEGER UNIQUE
+    - rule TEXT
+

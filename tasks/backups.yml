@@ -1,0 +1,32 @@
+---
+- name: Ensure backups directory is created
+  file:
+    path: /var/lib/postgresql/backups/
+    mode: 0777
+    state: directory
+  become_user: root
+
+- name: Managing suricata-db cleanup and backups
+  cron:
+    name: '{{ item.name }}'
+    minute: '0'
+    hour: '6'
+    day: '*'
+    month: '*'
+    weekday: '*'
+    job: '{{ item.job }}'
+    user: postgres
+  loop:
+    - name: Manage suricata db cleanup
+      job: psql -U postgres -d idsaas -c "delete from events where timestamp < (current_date - interval '30 days');" > /dev/null 2>&1
+    - name: Manage suricata db backups
+      job: "/usr/local/bin/backup_postgres.sh > /dev/null 2>&1"
+
+- name: Ensure backup_postgres.sh script is present
+  template:
+    src: backup_postgres.sh.j2
+    dest: /usr/local/bin/backup_postgres.sh
+    owner: postgres
+    group: postgres
+    mode: 0755
+  become_user: root

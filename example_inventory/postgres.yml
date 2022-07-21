@@ -1,0 +1,58 @@
+---
+ansible_user: "root"
+
+# The list of ssh keys to be added to the
+# authorized_keys file on the servers.
+#
+# This will allow these users to SSH to the server.
+cybera_ssh_authorized_keys:
+  ubuntu:
+    user: ubuntu
+    ssh_keys:
+      - alice
+      - bob
+      - charles
+
+# Trusted sources
+cybera_networks_ipv4_trusted:
+  - 10.0.0.0/16
+
+
+member_prefixes:
+  - 10.0.1.0/24
+  - 10.0.2.0/24
+
+postgresql_user: postgres
+postgresql_group: postgres
+
+postgresql_global_config_options:
+  - option: listen_addresses
+    value: "*"
+  - option: port
+    value: 5432
+  - option: unix_socket_directories
+    value: '{{ postgresql_unix_socket_directories | join(",") }}'
+  - option: password_encryption
+    value: scram-sha-256
+
+postgresql_hba_entries:
+  - {type: hostnossl, database: all, user: all, address: '0.0.0.0/0', auth_method: reject}
+  - {type: hostnossl, database: all, user: all, address: '::/0', auth_method: reject}
+  - {type: host, database: idsaas, user: fluent, address: 'address/subnet of suricata container', auth_method: scram-sha-256}
+  - {type: host, database: all, user: all, address: '127.0.0.1/32', auth_method: scram-sha-256}
+  - {type: host, database: all, user: all, address: '::1/128', auth_method: scram-sha-256}
+
+postgresql_databases:
+  - name: idsaas
+
+# The value of password is the SCRAM-SHA-256 encrypted version of "a_password"
+postgresql_users:
+  - user: a_username
+    password: SCRAM-SHA-256$4096:QT5Rvfgumbm+XzTR+mM1Qg==$5OK9Nfp3by69/I74ybNC1ZFFiMFT390lm7DW94nf+Yg=:1FjwuFbTG77d94ykXywfMbad9OnrsFkkDs6f+dwAHWg=
+    db: idsaas
+    role_attr_flags: superuser
+
+postgres_users_no_log: false
+
+postgresql_auth_method: 'scram-sha-256'
+

@@ -1,0 +1,22 @@
+---
+- include_tasks: tables.yml
+  args:
+    apply:
+      tags: tables
+      become: yes
+      become_user: postgres
+
+- include_tasks: indicies.yml
+  args:
+    apply:
+      tags: indicies
+      become: yes
+      become_user: postgres
+
+- include_tasks: backups.yml
+  args:
+    apply:
+      tags: backups
+      become: yes
+      become_user: postgres
+

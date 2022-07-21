@@ -1,0 +1,28 @@
+- name: Deploying Suricata database to container
+  hosts: prod
+  tasks:
+    - name: Apply the Cybera common role
+      include_role:
+        name: common
+        apply:
+          tags:
+            - common
+      tags: common
+
+    - name: Apply postgres role
+      include_role:
+        name: postgresql
+        apply:
+          tags:
+            - postgres
+        tags:
+          - postgres
+
+    - name: Apply miridor-postgres role
+      include_role:
+        name: miridor-postgres
+        apply:
+          tags:
+            - miridor-postgres
+        tags:
+          - miridor-postgres
