@@ -2,7 +2,7 @@
 
 galaxy_info:
   author: cybera
-  role_name: cybera_postgres
+  role_name: cybera_ansible_mirdior_postgres
   description: Installation and configuration of Postgres Database for IDSaaS
   company: Cybera
   license: MIT
